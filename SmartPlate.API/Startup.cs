@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Db;
+using SmartPlate.API.Helpers;
+using SmartPlate.API.Repositories;
 
 namespace SmartPlate.API
 {
@@ -24,6 +27,13 @@ namespace SmartPlate.API
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            //Helpers
+            services.AddScoped<Sha512PasswordManager>();
+            services.AddScoped<TokenGenerator>();
+
+            //Repositories
+            services.AddScoped<IAuthRepository, AuthRepository>();
 
             services.AddCors();
         }

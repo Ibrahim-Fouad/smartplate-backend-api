@@ -8,11 +8,14 @@
   <ItemGroup>
     <Compile Remove="Migrations\20190419112955_CreateUsersTables.cs" />
     <Compile Remove="Migrations\20190419112955_CreateUsersTables.Designer.cs" />
+    <Compile Remove="Migrations\20190419115125_AddPasswordSaltToUsersTablw.cs" />
+    <Compile Remove="Migrations\20190419115125_AddPasswordSaltToUsersTablw.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
 </Project>

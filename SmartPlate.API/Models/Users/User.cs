@@ -21,5 +21,7 @@ namespace SmartPlate.API.Models.Users
 
         [Required] public string EducationalQualification { get; set; }
         [Required] public byte[] PasswordHashed { get; set; }
+        [Required] public byte[]  PasswordSalt { get; set; }
+
     }
 }
