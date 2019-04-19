@@ -21,5 +21,7 @@ namespace SmartPlate.API.Models.Users
         string BloodType { get; set; }
 
         string EducationalQualification { get; set; }
+
+        byte[] PasswordHashed { get; set; }
     }
 }
