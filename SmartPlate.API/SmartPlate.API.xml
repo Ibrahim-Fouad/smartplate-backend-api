@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SmartPlate.API</name>
+    </assembly>
+    <members>
+        <member name="M:SmartPlate.API.Controllers.AuthController.LoginUser(SmartPlate.API.Dto.Users.UserForLoginDto)">
+            <summary>
+            
+            </summary>
+            <param name="userForLoginDto"></param>
+            <returns></returns>
+            <response code="200">OK</response>
+            <response code="400">Bad Request</response>
+        </member>
+    </members>
+</doc>

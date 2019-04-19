@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +11,7 @@ using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Db;
 using SmartPlate.API.Helpers;
 using SmartPlate.API.Repositories;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace SmartPlate.API
 {
@@ -36,6 +40,20 @@ namespace SmartPlate.API
             services.AddScoped<IAuthRepository, AuthRepository>();
 
             services.AddCors();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1.0", new Info
+                {
+                    Title = "SMART PLATE API",
+                    Version = "1.0",
+                    Description = "API for Smart Plate project."
+                });
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +71,8 @@ namespace SmartPlate.API
 
             app.UseHttpsRedirection();
             app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "SMART PLATE API (v1.0)"); });
             app.UseMvc();
         }
     }
