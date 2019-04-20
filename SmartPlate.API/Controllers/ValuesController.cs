@@ -8,6 +8,7 @@ namespace SmartPlate.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Obsolete]
     public class ValuesController : ControllerBase
     {
         // GET api/values

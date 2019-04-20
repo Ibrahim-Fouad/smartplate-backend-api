@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Db;
 using SmartPlate.API.Dto.Users;
@@ -48,6 +50,28 @@ namespace SmartPlate.API.Repositories
                 Success = true,
                 AccessToken = token
             };
+        }
+
+        public void Seed()
+        {
+            if (_context.Users.Any())
+                return;
+
+            var user = new User
+            {
+                Id = "123456789",
+                Name = "User 1",
+                Address = "Cairo",
+                BloodType = "A+",
+                EducationalQualification = "BCS",
+                DateOfBirth = DateTime.Now.AddYears(-35)
+            };
+
+            _passwordManager.Generate("password", out var passwordHashed, out var passwordSalt);
+            user.PasswordSalt = passwordSalt;
+            user.PasswordHashed = passwordHashed;
+            _context.Users.Add(user);
+            _context.SaveChanges();
         }
     }
 }

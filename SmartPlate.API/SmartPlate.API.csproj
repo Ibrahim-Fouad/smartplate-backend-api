@@ -18,6 +18,8 @@
     <Compile Remove="Migrations\20190419112955_CreateUsersTables.Designer.cs" />
     <Compile Remove="Migrations\20190419115125_AddPasswordSaltToUsersTablw.cs" />
     <Compile Remove="Migrations\20190419115125_AddPasswordSaltToUsersTablw.Designer.cs" />
+    <Compile Remove="Migrations\20190419142521_ChangePasswordTypesInUsersTable.cs" />
+    <Compile Remove="Migrations\20190419142521_ChangePasswordTypesInUsersTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

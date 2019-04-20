@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Dto.Users;
 using SmartPlate.API.Models.Users;
@@ -71,5 +72,14 @@ namespace SmartPlate.API.Controllers
 
             return Ok(userAccessToken);
         }
+
+        [HttpPost("seed")]
+        [Obsolete("Do not use it.")]
+        public IActionResult Seed()
+        {
+            _authRepository.Seed();
+            return Ok();
+        }
+
     }
 }
