@@ -4,7 +4,7 @@
         <name>SmartPlate.API</name>
     </assembly>
     <members>
-        <member name="M:SmartPlate.API.Controllers.AuthController.LoginUser(SmartPlate.API.Dto.Users.UserForLoginDto)">
+        <member name="M:SmartPlate.API.Controllers.AuthenticationController.LoginUser(SmartPlate.API.Dto.Users.UserForLoginDto)">
             <summary>
             
             </summary>

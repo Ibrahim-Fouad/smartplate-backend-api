@@ -6,6 +6,8 @@ namespace SmartPlate.API.Dto.Users
     {
         public string AccessToken { get; set; }
 
+        public UserForDetailsDto User { get; set; }
+
         [JsonIgnore] public bool Success { get; set; }
 
         [JsonIgnore] public string ErrorMessage { get; set; }
