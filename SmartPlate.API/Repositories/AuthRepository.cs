@@ -29,7 +29,7 @@ namespace SmartPlate.API.Repositories
         }
 
 
-        public async Task<UserAccessToken> Register(string userType, UserForRegisterDto userForRegisterDto)
+        public async Task<UserAccessToken> RegisterAsync(string userType, UserForRegisterDto userForRegisterDto)
         {
             if (userForRegisterDto.Password != userForRegisterDto.ConfirmPassword)
                 return new UserAccessToken
@@ -39,7 +39,7 @@ namespace SmartPlate.API.Repositories
                 };
 
 
-            var isIdInDb = await GetUser(userType, userForRegisterDto.Id);
+            var isIdInDb = await GetUserAsync(userType, userForRegisterDto.Id);
             if (isIdInDb != null)
                 return new UserAccessToken
                 {
@@ -87,7 +87,7 @@ namespace SmartPlate.API.Repositories
             };
         }
 
-        public async Task<IUser> GetUser(string userType, string userId)
+        public async Task<IUser> GetUserAsync(string userType, string userId)
         {
             switch (userType.ToLower())
             {
@@ -102,9 +102,9 @@ namespace SmartPlate.API.Repositories
             }
         }
 
-        public async Task<UserForDetailsDto> GetUserMapped(string userType, string userId)
+        public async Task<UserForDetailsDto> GetUserMappedAsync(string userType, string userId)
         {
-            var userInDb = await GetUser(userType, userId);
+            var userInDb = await GetUserAsync(userType, userId);
             if (userInDb == null)
                 return new UserForDetailsDto
                 {
@@ -114,9 +114,9 @@ namespace SmartPlate.API.Repositories
             return _mapper.Map<UserForDetailsDto>(userInDb);
         }
 
-        public async Task<UserAccessToken> Login(string userType, string id, string password)
+        public async Task<UserAccessToken> LoginAsync(string userType, string id, string password)
         {
-            var userInDb = await GetUser(userType, id);
+            var userInDb = await GetUserAsync(userType, id);
 
             if (userInDb == null ||
                 !_passwordManager.ValidatePassword(password, userInDb.PasswordHashed, userInDb.PasswordSalt))
@@ -136,7 +136,7 @@ namespace SmartPlate.API.Repositories
             };
         }
 
-        public async Task<UserAccessToken> ChangePassword(string userType, string id,
+        public async Task<UserAccessToken> ChangePasswordAsync(string userType, string id,
             UserChangePasswordDto changePasswordDto)
         {
             if (changePasswordDto.NewPassword != changePasswordDto.ConfirmPassword)
@@ -146,7 +146,7 @@ namespace SmartPlate.API.Repositories
                     ErrorMessage = "New password and confirm password must be equals."
                 };
 
-            var userInDb = await GetUser(userType, id);
+            var userInDb = await GetUserAsync(userType, id);
 
             if (userInDb == null ||
                 !_passwordManager.ValidatePassword(changePasswordDto.OldPassword, userInDb.PasswordHashed,
@@ -179,9 +179,9 @@ namespace SmartPlate.API.Repositories
             };
         }
 
-        public async Task<UserAccessToken> UpdateUser(string userType, string userId, UserForUpdateDto userForUpdateDto)
+        public async Task<UserAccessToken> UpdateUserAsync(string userType, string userId, UserForUpdateDto userForUpdateDto)
         {
-            var user = await GetUser(userType, userId);
+            var user = await GetUserAsync(userType, userId);
             if (user == null)
                 return new UserAccessToken
                 {

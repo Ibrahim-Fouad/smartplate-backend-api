@@ -14,7 +14,7 @@ namespace SmartPlate.API.Controllers
             return Ok(new
             {
                 id = 1,
-                plateNumber = "ع و ص 123",
+                plateNumber = "ABC 123",
                 shaseehNumber = 1,
                 motorNumber = 2,
                 color = "red",

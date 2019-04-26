@@ -34,7 +34,7 @@ namespace SmartPlate.API.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> RegisterUser(string userType, UserForRegisterDto userForRegister)
         {
-            var result = await _authRepository.Register(userType, userForRegister);
+            var result = await _authRepository.RegisterAsync(userType, userForRegister);
             if (!result.Success)
                 return BadRequest(new {result.ErrorMessage});
 
@@ -58,7 +58,7 @@ namespace SmartPlate.API.Controllers
             try
             {
                 var userAccessToken =
-                    await _authRepository.Login(userType, userForLoginDto.Id, userForLoginDto.Password);
+                    await _authRepository.LoginAsync(userType, userForLoginDto.Id, userForLoginDto.Password);
                 if (!userAccessToken.Success)
                     return BadRequest(new {errorMessage = userAccessToken.ErrorMessage});
 
@@ -83,7 +83,7 @@ namespace SmartPlate.API.Controllers
         public async Task<IActionResult> ChangePassword(string userType, UserChangePasswordDto changePasswordDto)
         {
             var userId = User.FindFirst("id").Value;
-            var result = await _authRepository.ChangePassword(userType, userId, changePasswordDto);
+            var result = await _authRepository.ChangePasswordAsync(userType, userId, changePasswordDto);
             if (!result.Success)
                 return BadRequest(new {result.ErrorMessage});
 
@@ -100,7 +100,7 @@ namespace SmartPlate.API.Controllers
         public async Task<IActionResult> UpdateUser(string userType, UserForUpdateDto userForUpdateDto)
         {
             var userId = User.FindFirst("id").Value;
-            var result = await _authRepository.UpdateUser(userType, userId, userForUpdateDto);
+            var result = await _authRepository.UpdateUserAsync(userType, userId, userForUpdateDto);
             if (!result.Success)
                 return BadRequest(new {result.ErrorMessage});
 
@@ -116,7 +116,7 @@ namespace SmartPlate.API.Controllers
         public async Task<IActionResult> GetUserInfo(string userType)
         {
             var userId = User.FindFirst("id").Value;
-            var result = await _authRepository.GetUserMapped(userType, userId);
+            var result = await _authRepository.GetUserMappedAsync(userType, userId);
             if (!result.Success)
                 return BadRequest(new {result.ErrorMessage});
 
