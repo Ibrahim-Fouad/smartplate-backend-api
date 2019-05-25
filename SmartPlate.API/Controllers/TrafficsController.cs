@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartPlate.API.Core.Interfaces;
+using SmartPlate.API.Dto;
 using SmartPlate.API.Dto.Traffics;
 
 namespace SmartPlate.API.Controllers
@@ -65,6 +66,22 @@ namespace SmartPlate.API.Controllers
                 return BadRequest(new {result.ErrorMessage});
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        public IActionResult FilterTraffics(string sortBy = "id", string orderBy = "asc", int pageSize = 10,
+            int pageNumber = 1)
+        {
+            var sortObj = new SortDto
+            {
+                OrderBy = orderBy,
+                SortBy = sortBy,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+
+            return Ok(_trafficsRepository.SortTraffics(sortObj));
         }
     }
 }

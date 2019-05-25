@@ -5,7 +5,11 @@ using SmartPlate.API.Db;
 using SmartPlate.API.Dto.Traffics;
 using SmartPlate.API.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using SmartPlate.API.Dto;
 
 namespace SmartPlate.API.Repositories
 {
@@ -109,5 +113,31 @@ namespace SmartPlate.API.Repositories
             };
         }
 
+        public IEnumerable<TrafficForDetailsDto> SortTraffics(SortDto sortDto)
+        {
+            sortDto.SortBy = sortDto.SortBy.ToLower();
+            sortDto.OrderBy = sortDto.OrderBy.ToLower();
+
+            var traffics = _context.Traffics.AsQueryable();
+
+            var columnMap = new Dictionary<string, Expression<Func<Traffic, object>>>
+            {
+                ["id"] = c => c.Id,
+                ["name"] = c => c.Name,
+                ["address"] = c => c.Address,
+                ["governorate"] = c => c.Governorate,
+                ["phoneNumber"] = c => c.PhoneNumber,
+            };
+
+            if (sortDto.OrderBy == "asc")
+                traffics = traffics.OrderBy(columnMap[sortDto.SortBy]);
+            else
+                traffics = traffics.OrderByDescending(columnMap[sortDto.SortBy]);
+
+            traffics = traffics.Skip((sortDto.PageNumber - 1) * sortDto.PageSize).Take(sortDto.PageSize);
+            var t= traffics.ToArray();
+
+            return _mapper.Map<TrafficForDetailsDto[]>(t);
+        }
     }
 }

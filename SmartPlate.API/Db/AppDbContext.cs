@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using SmartPlate.API.Models;
 using SmartPlate.API.Models.Users;
 
@@ -6,7 +7,6 @@ namespace SmartPlate.API.Db
 {
     public class AppDbContext : DbContext
     {
-
         public DbSet<User> Users { get; set; }
         public DbSet<Officer> Officers { get; set; }
         public DbSet<TrafficUser> TrafficUsers { get; set; }
@@ -15,6 +15,11 @@ namespace SmartPlate.API.Db
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
+            var pendingMigrations = Database.GetPendingMigrations();
+            if (pendingMigrations.Any())
+            {
+                Database.MigrateAsync().Wait();
+            }
         }
     }
 }

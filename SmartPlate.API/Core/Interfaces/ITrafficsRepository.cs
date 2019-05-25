@@ -1,6 +1,8 @@
-﻿using SmartPlate.API.Dto.Traffics;
+﻿using System.Collections.Generic;
+using SmartPlate.API.Dto.Traffics;
 using SmartPlate.API.Models;
 using System.Threading.Tasks;
+using SmartPlate.API.Dto;
 
 namespace SmartPlate.API.Core.Interfaces
 {
@@ -13,8 +15,8 @@ namespace SmartPlate.API.Core.Interfaces
 
         Task<TrafficForDetailsDto> EditTrafficAsync(int trafficId, TrafficForUpdateDto trafficForUpdateDto);
 
+        IEnumerable<TrafficForDetailsDto> SortTraffics(SortDto sortDto);
+
         //Task<TrafficForDetailsDto> DeleteTrafficAsync(int trafficId);
-
-
     }
 }
