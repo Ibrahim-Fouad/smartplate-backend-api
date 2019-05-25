@@ -7,7 +7,7 @@ using SmartPlate.API.Dto.Traffics;
 
 namespace SmartPlate.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/traffics")]
     [ApiController]
     [Authorize]
     public class TrafficsController : ControllerBase

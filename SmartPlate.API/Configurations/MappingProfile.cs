@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SmartPlate.API.Dto.Cars;
 using SmartPlate.API.Dto.Traffics;
 using SmartPlate.API.Dto.Users;
 using SmartPlate.API.Extensions;
@@ -27,7 +28,6 @@ namespace SmartPlate.API.Configurations
                 .ForMember(item => item.Age, src => src.MapFrom(user => user.DateOfBirth.GetAge()));
 
             CreateMap<UserForRegisterDto, IUser>();
-
             CreateMap<IUser, User>();
             CreateMap<IUser, Officer>();
             CreateMap<IUser, TrafficUser>();
@@ -45,6 +45,13 @@ namespace SmartPlate.API.Configurations
                     src => src.Condition(u => !string.IsNullOrWhiteSpace(u.Governorate)))
                 .ForMember(member => member.PhoneNumber,
                     src => src.Condition(u => !string.IsNullOrWhiteSpace(u.PhoneNumber)));
+
+
+            //Cars
+            CreateMap<CarForCreationDto, Car>()
+                .ForMember(m => m.EndDate, src => src.MapFrom(car => car.StartDate.GetCarEndDate()));
+            CreateMap<Car, CarForDetailsDto>()
+                .ForMember(member => member.LicenseIsValid, src => src.MapFrom(car => car.EndDate.IsVaild()));
         }
     }
 }
