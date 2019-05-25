@@ -13,6 +13,8 @@ namespace SmartPlate.API.Db
 
         public DbSet<Traffic> Traffics { get; set; }
 
+        public DbSet<Car> Cars { get; set; }
+
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }

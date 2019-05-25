@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace SmartPlate.API.Models.Users
 {
     public class User : IUser
     {
+        public User()
+        {
+            Cars = new Collection<Car>();
+        }
         public string Id { get; set; }
 
         [Required] [StringLength(100)] public string Name { get; set; }
@@ -22,6 +28,8 @@ namespace SmartPlate.API.Models.Users
         [Required] public string EducationalQualification { get; set; }
         [Required] public byte[] PasswordHashed { get; set; }
         [Required] public byte[]  PasswordSalt { get; set; }
+
+        public ICollection<Car> Cars { get; set; }
 
     }
 }
