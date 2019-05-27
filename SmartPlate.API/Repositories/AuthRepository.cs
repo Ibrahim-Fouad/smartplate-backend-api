@@ -38,6 +38,13 @@ namespace SmartPlate.API.Repositories
                     ErrorMessage = "Password and confirm password must be equal."
                 };
 
+            if (userForRegisterDto.DateOfBirth.Year >= DateTime.Now.Year ||
+                userForRegisterDto.DateOfBirth.Year == DateTime.MinValue.Year)
+                return new UserAccessToken
+                {
+                    Success = false,
+                    ErrorMessage = "Date of birth is not in correct format."
+                };
 
             var isIdInDb = await GetUserAsync(userType, userForRegisterDto.Id);
             if (isIdInDb != null)
@@ -53,6 +60,7 @@ namespace SmartPlate.API.Repositories
 
             user.PasswordSalt = passwordSalt;
             user.PasswordHashed = passwordHashed;
+
             switch (userType.ToLower())
             {
                 case "user":
@@ -179,7 +187,8 @@ namespace SmartPlate.API.Repositories
             };
         }
 
-        public async Task<UserAccessToken> UpdateUserAsync(string userType, string userId, UserForUpdateDto userForUpdateDto)
+        public async Task<UserAccessToken> UpdateUserAsync(string userType, string userId,
+            UserForUpdateDto userForUpdateDto)
         {
             var user = await GetUserAsync(userType, userId);
             if (user == null)

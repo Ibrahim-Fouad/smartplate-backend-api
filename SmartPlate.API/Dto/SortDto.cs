@@ -2,11 +2,17 @@
 {
     public class SortDto
     {
-        public int PageSize { get; set; }
-        public int PageNumber { get; set; }
+        public int PageSize { get; }
+        public int PageNumber { get; }
+        public string SortBy { get; }
+        public bool IsAscending { get; }
 
-        public string SortBy { get; set; }
-
-        public string OrderBy { get; set; }
+        public SortDto(string sortBy, string orderBy, int pageSize, int pageNumber)
+        {
+            IsAscending = orderBy.ToLower() != "desc";
+            SortBy = sortBy.ToLower();
+            PageSize = pageSize;
+            PageNumber = pageNumber;
+        }
     }
 }

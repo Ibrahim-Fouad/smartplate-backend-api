@@ -90,5 +90,24 @@ namespace SmartPlate.API.Controllers
 
             return Ok(car);
         }
+
+        /// <summary>
+        /// Update car info (change owner of the car)
+        /// </summary>
+        /// <param name="carId">Id of car</param>
+        /// <param name="carForUpdate">Information of new owner or new traffic.</param>
+        /// <returns>Car object</returns>
+        [HttpPut("{carId}")]
+        public async Task<IActionResult> UpdateCar(int carId, CarForUpdateDto carForUpdate)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updateResult = await _carsRepository.UpdateCarDetails(carId, carForUpdate);
+            if (!updateResult.Success)
+                return BadRequest(new {updateResult.ErrorMessage});
+
+            return Ok(updateResult);
+        }
     }
 }

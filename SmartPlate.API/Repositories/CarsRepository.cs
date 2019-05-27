@@ -14,16 +14,21 @@ namespace SmartPlate.API.Repositories
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ITrafficsRepository _trafficsRepository;
 
-        public CarsRepository(AppDbContext context, IMapper mapper)
+        public CarsRepository(AppDbContext context,
+            IMapper mapper,
+            ITrafficsRepository trafficsRepository)
         {
             _context = context;
             _mapper = mapper;
+            _trafficsRepository = trafficsRepository;
         }
 
         public async Task<CarForDetailsDto> AddCarAsync(CarForCreationDto carForCreationDto)
         {
-            if (await _context.Cars.AnyAsync(c => c.PlateNumber.ToLower() == carForCreationDto.PlateNumber.ToLower()))
+            if (await _context.Cars.AnyAsync(c => string.Equals(c.PlateNumber, carForCreationDto.PlateNumber,
+                StringComparison.CurrentCultureIgnoreCase)))
                 return new CarForDetailsDto
                 {
                     Success = false,
@@ -35,6 +40,13 @@ namespace SmartPlate.API.Repositories
                 {
                     Success = false,
                     ErrorMessage = "License start date can not be greater than current date."
+                };
+
+            if (!await _trafficsRepository.TrafficExists(carForCreationDto.TrafficId))
+                return new CarForDetailsDto
+                {
+                    Success = false,
+                    ErrorMessage = "Traffic is not exists."
                 };
 
             var car = _mapper.Map<CarForCreationDto, Car>(carForCreationDto);
@@ -62,7 +74,7 @@ namespace SmartPlate.API.Repositories
         {
             return await _context.Cars
                 .Include(c => c.Traffic)
-                .Where(c => c.PlateNumber.Equals(plateNumber, StringComparison.OrdinalIgnoreCase))
+                .Where(c => c.PlateNumber.Equals(plateNumber, StringComparison.CurrentCultureIgnoreCase))
                 .FirstOrDefaultAsync();
         }
 
@@ -87,6 +99,46 @@ namespace SmartPlate.API.Repositories
                 {
                     Success = false,
                     ErrorMessage = "Car is not found."
+                };
+
+            return _mapper.Map<CarForDetailsDto>(car);
+        }
+
+        public async Task<CarForDetailsDto> UpdateCarDetails(int carId, CarForUpdateDto carForUpdateDto)
+        {
+            var car = await GetCar(carId);
+            if (car == null)
+                return new CarForDetailsDto
+                {
+                    Success = false,
+                    ErrorMessage = "Car is not found."
+                };
+
+            if (await _context.Cars.AnyAsync(c =>
+                c.PlateNumber.Equals(carForUpdateDto.PlateNumber, StringComparison.CurrentCultureIgnoreCase)))
+                return new CarForDetailsDto
+                {
+                    Success = false,
+                    ErrorMessage = "New plate number is already exists."
+                };
+
+            if (carForUpdateDto.TrafficId != 0 && !await _trafficsRepository.TrafficExists(carForUpdateDto.TrafficId))
+                return new CarForDetailsDto
+                {
+                    Success = false,
+                    ErrorMessage = "New traffic is not found"
+                };
+
+            _mapper.Map(carForUpdateDto, car);
+            car.StartDate = DateTime.Now;
+            car.EndDate = car.StartDate.AddYears(10);
+
+            var count = await _context.SaveChangesAsync();
+            if (count == 0)
+                return new CarForDetailsDto
+                {
+                    Success = false,
+                    ErrorMessage = "No data has changed."
                 };
 
             return _mapper.Map<CarForDetailsDto>(car);

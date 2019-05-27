@@ -68,20 +68,20 @@ namespace SmartPlate.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get List of all traffics with ability to sort them.
+        /// </summary>
+        /// <param name="sortBy">Column name to sort with.</param>
+        /// <param name="orderBy">ASC or DESC</param>
+        /// <param name="pageSize">The number of records in the page</param>
+        /// <param name="pageNumber">The number of page you want to view.</param>
+        /// <returns></returns>
         [HttpGet]
-        public IActionResult FilterTraffics(string sortBy = "id", string orderBy = "asc", int pageSize = 10,
+        public async Task<IActionResult> FilterTraffics(string sortBy = "id", string orderBy = "asc", int pageSize = 10,
             int pageNumber = 1)
         {
-            var sortObj = new SortDto
-            {
-                OrderBy = orderBy,
-                SortBy = sortBy,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
-
-
-            return Ok(_trafficsRepository.SortTraffics(sortObj));
+            var sortObj = new SortDto(sortBy, orderBy, pageSize, pageNumber);
+            return Ok(await _trafficsRepository.SortTraffics(sortObj));
         }
     }
 }

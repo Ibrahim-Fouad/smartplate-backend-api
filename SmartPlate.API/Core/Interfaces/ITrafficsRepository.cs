@@ -15,7 +15,9 @@ namespace SmartPlate.API.Core.Interfaces
 
         Task<TrafficForDetailsDto> EditTrafficAsync(int trafficId, TrafficForUpdateDto trafficForUpdateDto);
 
-        IEnumerable<TrafficForDetailsDto> SortTraffics(SortDto sortDto);
+        Task<IEnumerable<TrafficForDetailsDto>> SortTraffics(SortDto sortDto);
+
+        Task<bool> TrafficExists(int trafficId);
 
         //Task<TrafficForDetailsDto> DeleteTrafficAsync(int trafficId);
     }

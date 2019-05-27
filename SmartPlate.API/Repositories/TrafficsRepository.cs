@@ -28,8 +28,9 @@ namespace SmartPlate.API.Repositories
         public async Task<TrafficForDetailsDto> AddTrafficAsync(TrafficForCreateDto trafficForCreateDto)
         {
             var trafficInDb = await _context.Traffics.AnyAsync(t =>
-                t.Name.ToLower() == trafficForCreateDto.Name.ToLower() &&
-                t.Governorate.ToLower() == trafficForCreateDto.Governorate.ToLower());
+                string.Equals(t.Name, trafficForCreateDto.Name, StringComparison.CurrentCultureIgnoreCase) &&
+                string.Equals(t.Governorate, trafficForCreateDto.Governorate,
+                    StringComparison.CurrentCultureIgnoreCase));
 
             if (trafficInDb)
                 return new TrafficForDetailsDto
@@ -113,11 +114,8 @@ namespace SmartPlate.API.Repositories
             };
         }
 
-        public IEnumerable<TrafficForDetailsDto> SortTraffics(SortDto sortDto)
+        public async Task<IEnumerable<TrafficForDetailsDto>> SortTraffics(SortDto sortDto)
         {
-            sortDto.SortBy = sortDto.SortBy.ToLower();
-            sortDto.OrderBy = sortDto.OrderBy.ToLower();
-
             var traffics = _context.Traffics.AsQueryable();
 
             var columnMap = new Dictionary<string, Expression<Func<Traffic, object>>>
@@ -129,15 +127,18 @@ namespace SmartPlate.API.Repositories
                 ["phoneNumber"] = c => c.PhoneNumber,
             };
 
-            if (sortDto.OrderBy == "asc")
+            if (sortDto.IsAscending)
                 traffics = traffics.OrderBy(columnMap[sortDto.SortBy]);
             else
                 traffics = traffics.OrderByDescending(columnMap[sortDto.SortBy]);
 
             traffics = traffics.Skip((sortDto.PageNumber - 1) * sortDto.PageSize).Take(sortDto.PageSize);
-            var t= traffics.ToArray();
+            return _mapper.Map<TrafficForDetailsDto[]>(await traffics.ToListAsync());
+        }
 
-            return _mapper.Map<TrafficForDetailsDto[]>(t);
+        public async Task<bool> TrafficExists(int trafficId)
+        {
+            return await _context.Traffics.AnyAsync(t => t.Id == trafficId);
         }
     }
 }

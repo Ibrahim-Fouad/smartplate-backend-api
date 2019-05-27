@@ -1,0 +1,5 @@
+﻿[27/5/2019]
+- [Bug] Fix adding traffic not exists when adding new car.
+- [Bug] Fix DateOfBirth field in identity register.
+- Imporve traffic sorting.
+- [Feature] Update car information (Change car's owner or traffic)

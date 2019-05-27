@@ -52,6 +52,11 @@ namespace SmartPlate.API.Configurations
                 .ForMember(m => m.EndDate, src => src.MapFrom(car => car.StartDate.GetCarEndDate()));
             CreateMap<Car, CarForDetailsDto>()
                 .ForMember(member => member.LicenseIsValid, src => src.MapFrom(car => car.EndDate.IsVaild()));
+
+            CreateMap<CarForUpdateDto, Car>()
+                .ForMember(c => c.PlateNumber, src => src.Condition(c => !string.IsNullOrWhiteSpace(c.PlateNumber)))
+                .ForMember(c => c.TrafficId, src => src.Condition(c => c.TrafficId > 0))
+                .ForMember(c => c.UserId, src => src.Condition(c => !string.IsNullOrWhiteSpace(c.UserId)));
         }
     }
 }

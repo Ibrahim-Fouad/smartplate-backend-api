@@ -13,5 +13,7 @@ namespace SmartPlate.API.Core.Interfaces
 
         Task<CarForDetailsDto> GetCarMapped(int id);
         Task<CarForDetailsDto> GetCarMapped(string plateNumber);
+
+        Task<CarForDetailsDto> UpdateCarDetails(int carId, CarForUpdateDto carForUpdateDto);
     }
 }
