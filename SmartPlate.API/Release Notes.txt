@@ -3,3 +3,10 @@
 - [Bug] Fix DateOfBirth field in identity register.
 - Imporve traffic sorting.
 - [Feature] Update car information (Change car's owner or traffic)
+
+[6/6/2019]
+- [Bug] Fix View Release notes.
+- Add New Car as stolen
+
+[8/6/2019]
+- Add Check for car is stolen

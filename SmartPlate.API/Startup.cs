@@ -49,6 +49,7 @@ namespace SmartPlate.API
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<ITrafficsRepository, TrafficsRepository>();
             services.AddScoped<ICarsRepository, CarsRepository>();
+            services.AddScoped<IStolenCarsRepository, StolenCarsRepository>();
 
             services.AddCors();
 

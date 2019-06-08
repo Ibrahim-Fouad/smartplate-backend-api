@@ -11,6 +11,9 @@ namespace SmartPlate.API.Core.Interfaces
         Task<Car> GetCar(int id);
         Task<Car> GetCar(string plateNumber);
 
+        Task<bool> CarExists(int carId);
+
+        Task<bool> CarExists(string plateNumber);
         Task<CarForDetailsDto> GetCarMapped(int id);
         Task<CarForDetailsDto> GetCarMapped(string plateNumber);
 

@@ -15,6 +15,8 @@ namespace SmartPlate.API.Db
 
         public DbSet<Car> Cars { get; set; }
 
+        public DbSet<StolenCar> StolenCars { get; set; }
+
         public AppDbContext(DbContextOptions options) : base(options)
         {
             var pendingMigrations = Database.GetPendingMigrations();
@@ -23,5 +25,6 @@ namespace SmartPlate.API.Db
                 Database.MigrateAsync().Wait();
             }
         }
+
     }
 }

@@ -21,11 +21,16 @@ namespace SmartPlate.API.Extensions
         {
             return date.AddYears(10);
         }
-        
+
         //Check for if license end date is bigger than today.
         public static bool IsVaild(this DateTime date)
         {
             return date > DateTime.Now;
+        }
+
+        public static string CheckStoledObject(this byte obj)
+        {
+            return obj == 0 ? "Car" : "Plate";
         }
     }
 }

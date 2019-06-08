@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using SmartPlate.API.Dto.Cars;
+using SmartPlate.API.Dto.StolenCars;
 using SmartPlate.API.Dto.Traffics;
 using SmartPlate.API.Dto.Users;
 using SmartPlate.API.Extensions;
@@ -52,11 +54,21 @@ namespace SmartPlate.API.Configurations
                 .ForMember(m => m.EndDate, src => src.MapFrom(car => car.StartDate.GetCarEndDate()));
             CreateMap<Car, CarForDetailsDto>()
                 .ForMember(member => member.LicenseIsValid, src => src.MapFrom(car => car.EndDate.IsVaild()));
+            CreateMap<Car, CarForSimpleDetailsDto>()
+                .ForMember(member => member.LicenseIsValid, src => src.MapFrom(car => car.EndDate.IsVaild()));
+
 
             CreateMap<CarForUpdateDto, Car>()
                 .ForMember(c => c.PlateNumber, src => src.Condition(c => !string.IsNullOrWhiteSpace(c.PlateNumber)))
                 .ForMember(c => c.TrafficId, src => src.Condition(c => c.TrafficId > 0))
                 .ForMember(c => c.UserId, src => src.Condition(c => !string.IsNullOrWhiteSpace(c.UserId)));
+
+            //Stolen Cars
+            CreateMap<StolenCarForCreationDto, StolenCar>()
+                .ForMember(m => m.DateCreated, src => src.MapFrom(car => DateTime.Now));
+            CreateMap<StolenCar, StolenCarForDetailsDto>()
+                .ForMember(m => m.ObjectStoled, src => src.MapFrom(car => car.CarOrPlateIsStoled.CheckStoledObject()))
+                .ForMember(m => m.Car, src => src.MapFrom(car => car.Car));
         }
     }
 }

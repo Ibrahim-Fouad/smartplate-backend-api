@@ -18,7 +18,10 @@ namespace SmartPlate.API.Controllers
         [HttpGet("release")]
         public IActionResult GetReleaseNotes()
         {
-            var text = System.IO.File.ReadAllText(Path.Combine(_env.ContentRootPath, "Release Notes.txt"));
+            var path = Path.Combine(_env.ContentRootPath, "Release Notes.txt");
+            if (!System.IO.File.Exists(path))
+                path = "Release Notes.txt";
+            var text = System.IO.File.ReadAllText(path);
             return Ok(text);
         }
     }

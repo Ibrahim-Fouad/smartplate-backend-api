@@ -78,6 +78,16 @@ namespace SmartPlate.API.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<bool> CarExists(int carId)
+        {
+            return await _context.Cars.AnyAsync(c => c.Id == carId);
+        }
+
+        public async Task<bool> CarExists(string plateNumber)
+        {
+            return await _context.Cars.AnyAsync(c => c.PlateNumber == plateNumber);
+        }
+
         public async Task<CarForDetailsDto> GetCarMapped(int id)
         {
             var car = await GetCar(id);
