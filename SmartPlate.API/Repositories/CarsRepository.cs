@@ -1,12 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Db;
+using SmartPlate.API.Dto;
 using SmartPlate.API.Dto.Cars;
 using SmartPlate.API.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace SmartPlate.API.Repositories
 {
@@ -97,7 +100,6 @@ namespace SmartPlate.API.Repositories
                     Success = false,
                     ErrorMessage = "Car is not found."
                 };
-
             return _mapper.Map<CarForDetailsDto>(car);
         }
 
@@ -152,6 +154,44 @@ namespace SmartPlate.API.Repositories
                 };
 
             return _mapper.Map<CarForDetailsDto>(car);
+        }
+
+        public async Task<IEnumerable<CarForDetailsDto>> GetUsersCars(string userId, SortDto sort)
+        {
+            var userCars = _context.Cars
+                .Include(c => c.Traffic)
+                .Where(c => c.UserId == userId)
+                .AsQueryable();
+
+            //id, plateNumber, fuel, vechileType, carModel, model
+            var columnMap = new Dictionary<string, Expression<Func<Car, object>>>
+            {
+                ["id"] = c => c.Id,
+                ["plateNumber"] = c => c.PlateNumber,
+                ["vechileType"] = c => c.VechileType,
+                ["fuel"] = c => c.Fuel,
+                ["carModel"] = c => c.CarModel,
+                ["model"] = c => c.CarModel
+            };
+
+            if (sort.IsAscending)
+                userCars = userCars.OrderBy(columnMap[sort.SortBy]);
+            else
+                userCars = userCars.OrderByDescending(columnMap[sort.SortBy]);
+
+            userCars = userCars.Skip((sort.PageNumber - 1) * sort.PageSize).Take(sort.PageSize);
+            return _mapper.Map<CarForDetailsDto[]>(await userCars.ToListAsync());
+        }
+
+        public async Task<bool> ChangeStolenStateAsync(int carId, bool newState)
+        {
+            var car = await GetCar(carId);
+            if (car == null)
+                return false;
+
+            car.ReportedAsStolen = newState;
+           return await _context.SaveChangesAsync() > 0;
+
         }
     }
 }

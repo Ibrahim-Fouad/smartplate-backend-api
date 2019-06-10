@@ -1,4 +1,6 @@
-﻿namespace SmartPlate.API.Dto
+﻿using SmartPlate.API.Extensions;
+
+namespace SmartPlate.API.Dto
 {
     public class SortDto
     {
@@ -10,7 +12,7 @@
         public SortDto(string sortBy, string orderBy, int pageSize, int pageNumber)
         {
             IsAscending = orderBy.ToLower() != "desc";
-            SortBy = sortBy.ToLower();
+            SortBy = sortBy.ToCamelCase();
             PageSize = pageSize;
             PageNumber = pageNumber;
         }

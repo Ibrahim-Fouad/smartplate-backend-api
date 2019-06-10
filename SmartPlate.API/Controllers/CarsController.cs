@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartPlate.API.Core.Interfaces;
+using SmartPlate.API.Dto;
 using SmartPlate.API.Dto.Cars;
 using System.Threading.Tasks;
 
@@ -108,6 +109,23 @@ namespace SmartPlate.API.Controllers
                 return BadRequest(new {updateResult.ErrorMessage});
 
             return Ok(updateResult);
+        }
+
+        /// <summary>
+        /// Get List of all cars of current logged in user with ability to sort them.
+        /// </summary>
+        /// <param name="sortBy">Column name to sort with [ id, plateNumber, fuel, vechileType, carModel, model ]</param>
+        /// <param name="orderBy">ASC or DESC</param>
+        /// <param name="pageSize">The number of records in the page</param>
+        /// <param name="pageNumber">The number of page you want to view.</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> FilterTraffics(string sortBy = "id", string orderBy = "asc", int pageSize = 10,
+            int pageNumber = 1)
+        {
+            var userId = User.FindFirst("id").Value;
+            var sortObj = new SortDto(sortBy, orderBy, pageSize, pageNumber);
+            return Ok(await _carsRepository.GetUsersCars(userId, sortObj));
         }
     }
 }

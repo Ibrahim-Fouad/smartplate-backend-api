@@ -1,5 +1,7 @@
-﻿using SmartPlate.API.Dto.Cars;
+﻿using System.Collections.Generic;
+using SmartPlate.API.Dto.Cars;
 using System.Threading.Tasks;
+using SmartPlate.API.Dto;
 using SmartPlate.API.Models;
 
 namespace SmartPlate.API.Core.Interfaces
@@ -18,5 +20,9 @@ namespace SmartPlate.API.Core.Interfaces
         Task<CarForDetailsDto> GetCarMapped(string plateNumber);
 
         Task<CarForDetailsDto> UpdateCarDetails(int carId, CarForUpdateDto carForUpdateDto);
+
+        Task<IEnumerable<CarForDetailsDto>> GetUsersCars(string userId, SortDto sort);
+
+        Task<bool> ChangeStolenStateAsync(int carId, bool newState);
     }
 }

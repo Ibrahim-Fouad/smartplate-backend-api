@@ -10,3 +10,8 @@
 
 [8/6/2019]
 - Add Check for car is stolen
+- Add Get All cars for specific user with ability to sort them.
+
+[10/6/2019]
+- Add Reported as stolen when display cars info.
+- Add mark plate is stolen when trying to stole it.

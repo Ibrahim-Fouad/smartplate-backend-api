@@ -64,7 +64,7 @@ namespace SmartPlate.API.Configurations
                 .ForMember(c => c.UserId, src => src.Condition(c => !string.IsNullOrWhiteSpace(c.UserId)));
 
             //Stolen Cars
-            CreateMap<StolenCarForCreationDto, StolenCar>()
+           CreateMap<StolenCarForCreationDto, StolenCar>()
                 .ForMember(m => m.DateCreated, src => src.MapFrom(car => DateTime.Now));
             CreateMap<StolenCar, StolenCarForDetailsDto>()
                 .ForMember(m => m.ObjectStoled, src => src.MapFrom(car => car.CarOrPlateIsStoled.CheckStoledObject()))

@@ -39,6 +39,8 @@ namespace SmartPlate.API.Dto.Cars
 
         public bool LicenseIsValid { get; set; }
 
+        public bool ReportedAsStolen { get; set; }
+
         public UserForDetailsDto User { get; set; }
 
         public TrafficForDetailsDto Traffic { get; set; }

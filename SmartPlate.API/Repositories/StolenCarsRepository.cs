@@ -43,7 +43,10 @@ namespace SmartPlate.API.Repositories
 
             var count = await _context.SaveChangesAsync();
             if (count > 0)
+            {
+                await _carsRepository.ChangeStolenStateAsync(stolenCar.CarId, true);
                 return _mapper.Map<StolenCarForDetailsDto>(stolenCar);
+            }
 
             return new StolenCarForDetailsDto
             {

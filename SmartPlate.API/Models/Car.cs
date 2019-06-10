@@ -38,6 +38,8 @@ namespace SmartPlate.API.Models
 
         [Required] public string UserId { get; set; }
 
+        [Required] public bool ReportedAsStolen { get; set; }
+
         public User User { get; set; }
 
         [Required] public int TrafficId { get; set; }
