@@ -66,14 +66,14 @@ namespace SmartPlate.API.Repositories
             };
         }
 
-        public async Task<Car> GetCar(int id)
+        public async Task<Car> GetCarAsync(int id)
         {
             return await _context.Cars
                 .Include(c => c.Traffic)
                 .Where(c => c.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<Car> GetCar(string plateNumber)
+        public async Task<Car> GetCarAsync(string plateNumber)
         {
             return await _context.Cars
                 .Include(c => c.Traffic)
@@ -81,19 +81,19 @@ namespace SmartPlate.API.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> CarExists(int carId)
+        public async Task<bool> CarExistsAsync(int carId)
         {
             return await _context.Cars.AnyAsync(c => c.Id == carId);
         }
 
-        public async Task<bool> CarExists(string plateNumber)
+        public async Task<bool> CarExistsAsync(string plateNumber)
         {
             return await _context.Cars.AnyAsync(c => c.PlateNumber == plateNumber);
         }
 
-        public async Task<CarForDetailsDto> GetCarMapped(int id)
+        public async Task<CarForDetailsDto> GetCarMappedAsync(int id)
         {
-            var car = await GetCar(id);
+            var car = await GetCarAsync(id);
             if (car == null)
                 return new CarForDetailsDto
                 {
@@ -103,9 +103,9 @@ namespace SmartPlate.API.Repositories
             return _mapper.Map<CarForDetailsDto>(car);
         }
 
-        public async Task<CarForDetailsDto> GetCarMapped(string plateNumber)
+        public async Task<CarForDetailsDto> GetCarMappedAsync(string plateNumber)
         {
-            var car = await GetCar(plateNumber);
+            var car = await GetCarAsync(plateNumber);
             if (car == null)
                 return new CarForDetailsDto
                 {
@@ -116,9 +116,9 @@ namespace SmartPlate.API.Repositories
             return _mapper.Map<CarForDetailsDto>(car);
         }
 
-        public async Task<CarForDetailsDto> UpdateCarDetails(int carId, CarForUpdateDto carForUpdateDto)
+        public async Task<CarForDetailsDto> UpdateCarDetailsAsync(int carId, CarForUpdateDto carForUpdateDto)
         {
-            var car = await GetCar(carId);
+            var car = await GetCarAsync(carId);
             if (car == null)
                 return new CarForDetailsDto
                 {
@@ -156,7 +156,7 @@ namespace SmartPlate.API.Repositories
             return _mapper.Map<CarForDetailsDto>(car);
         }
 
-        public async Task<IEnumerable<CarForDetailsDto>> GetUsersCars(string userId, SortDto sort)
+        public async Task<IEnumerable<CarForDetailsDto>> GetUsersCarsAsync(string userId, SortDto sort)
         {
             var userCars = _context.Cars
                 .Include(c => c.Traffic)
@@ -183,9 +183,36 @@ namespace SmartPlate.API.Repositories
             return _mapper.Map<CarForDetailsDto[]>(await userCars.ToListAsync());
         }
 
+        public async Task<IEnumerable<CarForDetailsDto>> GetAllCarsAsync(SortDto sort)
+        {
+            var userCars = _context.Cars
+                .Include(c => c.Traffic)
+                .AsQueryable();
+
+            //id, plateNumber, fuel, vechileType, carModel, model
+            var columnMap = new Dictionary<string, Expression<Func<Car, object>>>
+            {
+                ["id"] = c => c.Id,
+                ["plateNumber"] = c => c.PlateNumber,
+                ["vechileType"] = c => c.VechileType,
+                ["fuel"] = c => c.Fuel,
+                ["carModel"] = c => c.CarModel,
+                ["model"] = c => c.CarModel
+            };
+
+            if (sort.IsAscending)
+                userCars = userCars.OrderBy(columnMap[sort.SortBy]);
+            else
+                userCars = userCars.OrderByDescending(columnMap[sort.SortBy]);
+
+            userCars = userCars.Skip((sort.PageNumber - 1) * sort.PageSize).Take(sort.PageSize);
+            return _mapper.Map<CarForDetailsDto[]>(await userCars.ToListAsync());
+
+        }
+
         public async Task<bool> ChangeStolenStateAsync(int carId, bool newState)
         {
-            var car = await GetCar(carId);
+            var car = await GetCarAsync(carId);
             if (car == null)
                 return false;
 

@@ -1,11 +1,15 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Db;
 using SmartPlate.API.Dto.StolenCars;
 using SmartPlate.API.Models;
+using System.Threading.Tasks;
+using SmartPlate.API.Dto;
 
 namespace SmartPlate.API.Repositories
 {
@@ -22,14 +26,37 @@ namespace SmartPlate.API.Repositories
             _mapper = mapper;
         }
 
-        public async Task<StolenCarForDetailsDto> AddNewStolenCar(StolenCarForCreationDto stolenCarDto)
+        public async Task<StolenCarForDetailsDto> AddNewStolenCarAsync(StolenCarForCreationDto stolenCarDto)
         {
-            if (!await _carsRepository.CarExists(stolenCarDto.CarId))
+            if (stolenCarDto.CarId == 0 || string.IsNullOrWhiteSpace(stolenCarDto.PlateNumber))
                 return new StolenCarForDetailsDto
                 {
                     Success = false,
-                    ErrorMessage = "Car is not exists"
+                    ErrorMessage = "You must enter car id or car plate number."
                 };
+
+            if (!string.IsNullOrWhiteSpace(stolenCarDto.PlateNumber))
+            {
+                var carIbDb = await _carsRepository.GetCarAsync(stolenCarDto.PlateNumber);
+                if (carIbDb == null)
+                    return new StolenCarForDetailsDto
+                    {
+                        Success = false,
+                        ErrorMessage = "Car is not exists"
+                    };
+
+                stolenCarDto.CarId = carIbDb.Id;
+            }
+            else
+            {
+                if (!await _carsRepository.CarExistsAsync(stolenCarDto.CarId))
+                    return new StolenCarForDetailsDto
+                    {
+                        Success = false,
+                        ErrorMessage = "Car is not exists"
+                    };
+            }
+
 
             if (await _context.StolenCars.AnyAsync(c => c.CarId == stolenCarDto.CarId && !c.HasReturenedToOwner))
                 return new StolenCarForDetailsDto
@@ -55,7 +82,7 @@ namespace SmartPlate.API.Repositories
             };
         }
 
-        public async Task<StolenCarForDetailsDto> CheckForCar(int carId)
+        public async Task<StolenCarForDetailsDto> CheckForCarAsync(int carId)
         {
             var stolenCarInDb = await _context.StolenCars
                 .Include(s => s.Car)
@@ -69,6 +96,31 @@ namespace SmartPlate.API.Repositories
                 };
 
             return _mapper.Map<StolenCarForDetailsDto>(stolenCarInDb);
+        }
+
+        public async Task<IEnumerable<StolenCarForDetailsDto>> FilterStolenCarsAsync(SortDto sort)
+        {
+            var stolenCars = _context.StolenCars
+                .Include(c => c.Car)
+                .AsQueryable();
+
+            //id, car, reternedToOwner, stolenObject
+            var columnMap = new Dictionary<string, Expression<Func<StolenCar, object>>>
+            {
+                ["id"] = c => c.Id,
+                ["car"] = c => c.CarId,
+                ["reternedToOwner"] = c => c.HasReturenedToOwner,
+                ["stolenObject"] = c => c.CarOrPlateIsStoled,
+            };
+
+            if (sort.IsAscending)
+                stolenCars = stolenCars.OrderBy(columnMap[sort.SortBy]);
+            else
+                stolenCars = stolenCars.OrderByDescending(columnMap[sort.SortBy]);
+
+            stolenCars = stolenCars.Skip((sort.PageNumber - 1) * sort.PageSize).Take(sort.PageSize);
+
+            return _mapper.Map<StolenCarForDetailsDto[]>(await stolenCars.ToListAsync());
         }
     }
 }

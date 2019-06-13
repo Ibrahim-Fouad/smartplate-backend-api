@@ -10,18 +10,19 @@ namespace SmartPlate.API.Core.Interfaces
     {
         Task<CarForDetailsDto> AddCarAsync(CarForCreationDto carForCreationDto);
 
-        Task<Car> GetCar(int id);
-        Task<Car> GetCar(string plateNumber);
+        Task<Car> GetCarAsync(int id);
+        Task<Car> GetCarAsync(string plateNumber);
 
-        Task<bool> CarExists(int carId);
+        Task<bool> CarExistsAsync(int carId);
 
-        Task<bool> CarExists(string plateNumber);
-        Task<CarForDetailsDto> GetCarMapped(int id);
-        Task<CarForDetailsDto> GetCarMapped(string plateNumber);
+        Task<bool> CarExistsAsync(string plateNumber);
+        Task<CarForDetailsDto> GetCarMappedAsync(int id);
+        Task<CarForDetailsDto> GetCarMappedAsync(string plateNumber);
 
-        Task<CarForDetailsDto> UpdateCarDetails(int carId, CarForUpdateDto carForUpdateDto);
+        Task<CarForDetailsDto> UpdateCarDetailsAsync(int carId, CarForUpdateDto carForUpdateDto);
 
-        Task<IEnumerable<CarForDetailsDto>> GetUsersCars(string userId, SortDto sort);
+        Task<IEnumerable<CarForDetailsDto>> GetUsersCarsAsync(string userId, SortDto sort);
+        Task<IEnumerable<CarForDetailsDto>> GetAllCarsAsync(SortDto sort);
 
         Task<bool> ChangeStolenStateAsync(int carId, bool newState);
     }

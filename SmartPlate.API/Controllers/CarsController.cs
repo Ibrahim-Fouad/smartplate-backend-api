@@ -19,7 +19,7 @@ namespace SmartPlate.API.Controllers
 
         //[HttpGet("id/1")]
         //[Obsolete("For testing only.")]
-        //public IActionResult GetCar()
+        //public IActionResult GetCarAsync()
         //{
         //    return Ok(new
         //    {
@@ -41,7 +41,7 @@ namespace SmartPlate.API.Controllers
         //}
 
         /// <summary>
-        /// Create new car.
+        /// [Web] Create new car.
         /// </summary>
         /// <param name="carForCreationDto">Object of cars details.</param>
         /// <returns>new car object</returns>
@@ -63,14 +63,14 @@ namespace SmartPlate.API.Controllers
         }
 
         /// <summary>
-        /// Get car by plate number
+        /// [All] Get car by plate number
         /// </summary>
         /// <param name="plateNumber">Number of plate</param>
         /// <returns>Car object</returns>
         [HttpGet("{plateNumber}")]
         public async Task<IActionResult> GetCarByPlateNumber(string plateNumber)
         {
-            var car = await _carsRepository.GetCarMapped(plateNumber);
+            var car = await _carsRepository.GetCarMappedAsync(plateNumber);
             if (!car.Success)
                 return BadRequest(new {car.ErrorMessage});
 
@@ -78,14 +78,14 @@ namespace SmartPlate.API.Controllers
         }
 
         /// <summary>
-        /// Get car by id
+        /// [All] Get car by id
         /// </summary>
         /// <param name="id">Id of car</param>
         /// <returns>Car object</returns>
         [HttpGet("id/{id}")]
         public async Task<IActionResult> GetCarById(int id)
         {
-            var car = await _carsRepository.GetCarMapped(id);
+            var car = await _carsRepository.GetCarMappedAsync(id);
             if (!car.Success)
                 return BadRequest(new {car.ErrorMessage});
 
@@ -93,7 +93,7 @@ namespace SmartPlate.API.Controllers
         }
 
         /// <summary>
-        /// Update car info (change owner of the car)
+        /// [Web] Update car info (change owner of the car)
         /// </summary>
         /// <param name="carId">Id of car</param>
         /// <param name="carForUpdate">Information of new owner or new traffic.</param>
@@ -104,7 +104,7 @@ namespace SmartPlate.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var updateResult = await _carsRepository.UpdateCarDetails(carId, carForUpdate);
+            var updateResult = await _carsRepository.UpdateCarDetailsAsync(carId, carForUpdate);
             if (!updateResult.Success)
                 return BadRequest(new {updateResult.ErrorMessage});
 
@@ -112,7 +112,27 @@ namespace SmartPlate.API.Controllers
         }
 
         /// <summary>
-        /// Get List of all cars of current logged in user with ability to sort them.
+        /// [Web, Android] Get List of all cars of current logged in user with ability to sort them.
+        /// </summary>
+        /// <param name="userId">User id </param>
+        /// <param name="sortBy">Column name to sort with [ id, plateNumber, fuel, vechileType, carModel, model ]</param>
+        /// <param name="orderBy">ASC or DESC</param>
+        /// <param name="pageSize">The number of records in the page</param>
+        /// <param name="pageNumber">The number of page you want to view.</param>
+        /// <returns></returns>
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetUserCars(string userId = "me", string sortBy = "id", string orderBy = "asc",
+            int pageSize = 10,
+            int pageNumber = 1)
+        {
+            userId = userId == "me" ? User.FindFirst("id").Value : userId;
+            var sortObj = new SortDto(sortBy, orderBy, pageSize, pageNumber);
+            return Ok(await _carsRepository.GetUsersCarsAsync(userId, sortObj));
+        }
+
+
+        /// <summary>
+        /// [Web] Get List of all cars with ability to sort them.
         /// </summary>
         /// <param name="sortBy">Column name to sort with [ id, plateNumber, fuel, vechileType, carModel, model ]</param>
         /// <param name="orderBy">ASC or DESC</param>
@@ -120,12 +140,12 @@ namespace SmartPlate.API.Controllers
         /// <param name="pageNumber">The number of page you want to view.</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> FilterTraffics(string sortBy = "id", string orderBy = "asc", int pageSize = 10,
+        public async Task<IActionResult> GetAllCars(string sortBy = "id", string orderBy = "asc", int pageSize = 10,
             int pageNumber = 1)
         {
             var userId = User.FindFirst("id").Value;
             var sortObj = new SortDto(sortBy, orderBy, pageSize, pageNumber);
-            return Ok(await _carsRepository.GetUsersCars(userId, sortObj));
+            return Ok(await _carsRepository.GetUsersCarsAsync(userId, sortObj));
         }
     }
 }

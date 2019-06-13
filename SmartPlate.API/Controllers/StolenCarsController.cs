@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Dto.StolenCars;
 using System.Threading.Tasks;
+using SmartPlate.API.Dto;
 
 namespace SmartPlate.API.Controllers
 {
@@ -15,7 +16,6 @@ namespace SmartPlate.API.Controllers
         public StolenCarsController(IStolenCarsRepository stolenCarsRepository)
         {
             _stolenCarsRepository = stolenCarsRepository;
-           
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace SmartPlate.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _stolenCarsRepository.AddNewStolenCar(stolenCarForCreationDto);
+            var result = await _stolenCarsRepository.AddNewStolenCarAsync(stolenCarForCreationDto);
 
             if (!result.Success)
                 return BadRequest(new {result.ErrorMessage});
@@ -45,18 +45,17 @@ namespace SmartPlate.API.Controllers
         [HttpPost("plate/{carId}")]
         public async Task<IActionResult> PlateHasStolen(int carId)
         {
-
             var model = new StolenCarForCreationDto
             {
                 CarId = carId,
                 CarOrPlateIsStoled = 1,
                 DateStoled = DateTime.Now,
-                LastLocation = "Your Last Parking",
+                LastLocation = "Your Last Parking location",
                 Latitude = 0,
                 Longitude = 0
             };
 
-            var result = await _stolenCarsRepository.AddNewStolenCar(model);
+            var result = await _stolenCarsRepository.AddNewStolenCarAsync(model);
 
             if (!result.Success)
                 return BadRequest(new {result.ErrorMessage});
@@ -72,12 +71,29 @@ namespace SmartPlate.API.Controllers
         [HttpGet("{carId}")]
         public async Task<IActionResult> CheckForStolenCar(int carId)
         {
-            var result = await _stolenCarsRepository.CheckForCar(carId);
+            var result = await _stolenCarsRepository.CheckForCarAsync(carId);
             if (!result.Success)
-                return BadRequest(new { result.ErrorMessage });
+                return BadRequest(new {result.ErrorMessage});
 
             return Ok(result);
+        }
 
+        //
+        /// <summary>
+        /// [Web] Get all stolen cars with ability to sort them
+        /// </summary>
+        /// <param name="sortBy">Column name to sort with [ id, car, reternedToOwner, stolenObject ]</param>
+        /// <param name="orderBy">ASC or DESC</param>
+        /// <param name="pageSize">The number of records in the page</param>
+        /// <param name="pageNumber">The number of page you want to view.</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> FilterStolenCars(string sortBy = "id", string orderBy = "asc",
+            int pageSize = 10,
+            int pageNumber = 1)
+        {
+            var sortObj = new SortDto(sortBy, orderBy, pageSize, pageNumber);
+            return Ok(await _stolenCarsRepository.FilterStolenCarsAsync(sortObj));
         }
     }
 }
