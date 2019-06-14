@@ -3,11 +3,13 @@ using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Dto;
 using SmartPlate.API.Dto.Cars;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SmartPlate.API.Controllers
 {
     [Route("api/cars")]
     [ApiController]
+    [Authorize]
     public class CarsController : ControllerBase
     {
         private readonly ICarsRepository _carsRepository;
@@ -130,7 +132,6 @@ namespace SmartPlate.API.Controllers
             return Ok(await _carsRepository.GetUsersCarsAsync(userId, sortObj));
         }
 
-
         /// <summary>
         /// [Web] Get List of all cars with ability to sort them.
         /// </summary>
@@ -143,9 +144,9 @@ namespace SmartPlate.API.Controllers
         public async Task<IActionResult> GetAllCars(string sortBy = "id", string orderBy = "asc", int pageSize = 10,
             int pageNumber = 1)
         {
-            var userId = User.FindFirst("id").Value;
+            //var userId = User.FindFirst("id").Value;
             var sortObj = new SortDto(sortBy, orderBy, pageSize, pageNumber);
-            return Ok(await _carsRepository.GetUsersCarsAsync(userId, sortObj));
+            return Ok(await _carsRepository.GetAllCarsAsync(sortObj));
         }
     }
 }

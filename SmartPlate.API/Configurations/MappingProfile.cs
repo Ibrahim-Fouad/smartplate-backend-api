@@ -29,6 +29,8 @@ namespace SmartPlate.API.Configurations
             CreateMap<IUser, UserForDetailsDto>()
                 .ForMember(item => item.Age, src => src.MapFrom(user => user.DateOfBirth.GetAge()));
 
+            CreateMap<IUser, UserForSimpleDetailsDto>();
+
             CreateMap<UserForRegisterDto, IUser>();
             CreateMap<IUser, User>();
             CreateMap<IUser, Officer>();
@@ -53,6 +55,8 @@ namespace SmartPlate.API.Configurations
             CreateMap<CarForCreationDto, Car>()
                 .ForMember(m => m.EndDate, src => src.MapFrom(car => car.StartDate.GetCarEndDate()));
             CreateMap<Car, CarForDetailsDto>()
+                .ForMember(member => member.LicenseIsValid, src => src.MapFrom(car => car.EndDate.IsVaild())); 
+            CreateMap<Car, CarForListDto>()
                 .ForMember(member => member.LicenseIsValid, src => src.MapFrom(car => car.EndDate.IsVaild()));
             CreateMap<Car, CarForSimpleDetailsDto>()
                 .ForMember(member => member.LicenseIsValid, src => src.MapFrom(car => car.EndDate.IsVaild()));

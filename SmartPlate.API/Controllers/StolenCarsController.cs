@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Dto.StolenCars;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using SmartPlate.API.Dto;
 
 namespace SmartPlate.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StolenCarsController : ControllerBase
     {
         private readonly IStolenCarsRepository _stolenCarsRepository;

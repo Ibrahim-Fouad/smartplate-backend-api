@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using SmartPlate.API.Core.Interfaces;
 using SmartPlate.API.Db;
 using SmartPlate.API.Extensions;
@@ -77,6 +80,7 @@ namespace SmartPlate.API
                     ValidateAudience = false,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                    
                 };
             });
         }
@@ -99,7 +103,9 @@ namespace SmartPlate.API
                         if (error != null)
                         {
                             context.Response.AddApplicationError(error.Error.Message);
-                            await context.Response.WriteAsync(error.Error.Message);
+                            context.Response.ContentType = "application/json";
+                            var erroObject = new {erroMessage = error.Error.Message, exception = error.Error};
+                            await context.Response.WriteAsync(JsonConvert.SerializeObject(erroObject));
                         }
                     });
                 });

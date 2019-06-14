@@ -22,7 +22,7 @@ namespace SmartPlate.API.Core.Interfaces
         Task<CarForDetailsDto> UpdateCarDetailsAsync(int carId, CarForUpdateDto carForUpdateDto);
 
         Task<IEnumerable<CarForDetailsDto>> GetUsersCarsAsync(string userId, SortDto sort);
-        Task<IEnumerable<CarForDetailsDto>> GetAllCarsAsync(SortDto sort);
+        Task<IEnumerable<CarForListDto>> GetAllCarsAsync(SortDto sort);
 
         Task<bool> ChangeStolenStateAsync(int carId, bool newState);
     }

@@ -18,6 +18,8 @@
 
 [13/6/2019]
 - Refactor code for readability and optimization
+- [Bug] Fix get all cars returns current logged user cars.
+- Include user object in all cars response
 = All
 	- Add get cars for specific user (can use it for current logged in user)
 	- Now user can report car is stolen by car plate number

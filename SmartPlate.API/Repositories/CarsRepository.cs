@@ -183,10 +183,11 @@ namespace SmartPlate.API.Repositories
             return _mapper.Map<CarForDetailsDto[]>(await userCars.ToListAsync());
         }
 
-        public async Task<IEnumerable<CarForDetailsDto>> GetAllCarsAsync(SortDto sort)
+        public async Task<IEnumerable<CarForListDto>> GetAllCarsAsync(SortDto sort)
         {
             var userCars = _context.Cars
                 .Include(c => c.Traffic)
+                .Include(c => c.User)
                 .AsQueryable();
 
             //id, plateNumber, fuel, vechileType, carModel, model
@@ -206,7 +207,7 @@ namespace SmartPlate.API.Repositories
                 userCars = userCars.OrderByDescending(columnMap[sort.SortBy]);
 
             userCars = userCars.Skip((sort.PageNumber - 1) * sort.PageSize).Take(sort.PageSize);
-            return _mapper.Map<CarForDetailsDto[]>(await userCars.ToListAsync());
+            return _mapper.Map<CarForListDto[]>(await userCars.ToListAsync());
 
         }
 
